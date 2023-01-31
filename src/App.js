@@ -87,7 +87,7 @@ function App() {
     }
   };
 
-  useEffect(()=>{runHandpose()},[]);
+runHandpose()
 
   return (
     <div className="App">
