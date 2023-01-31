@@ -8,15 +8,19 @@ import { drawHand } from "./utilities";
 import rockGesture from "./Rock";
 
 import * as fp from "fingerpose";
+// import fpg from 'fingerpose-gestures'
 import victory from "./img/victory.png";
 import thumbs_up from "./img/thumbs_up.png";
+
 import rock from "./img/rock.png";
+
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const [emoji, setEmoji] = useState(null);
+
   const images = { thumbs_up: thumbs_up, victory: victory, rock: rock };
 
   const runHandpose = async () => {
@@ -83,7 +87,7 @@ function App() {
     }
   };
 
-  runHandpose();
+  useEffect(()=>{runHandpose()},[]);
 
   return (
     <div className="App">
@@ -121,6 +125,7 @@ function App() {
         {emoji !== null ? (
           <img
             src={images[emoji]}
+            alt={emoji}
             style={{
               position: "absolute",
               marginLeft: "auto",
