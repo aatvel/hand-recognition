@@ -14,15 +14,18 @@ import thumbs_up from "./img/thumbs_up.png";
 
 import rock from "./img/rock.png";
 
+import Scene from "./Scene";
+import { useEmojiStore } from "./store";
+
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const [emoji, setEmoji] = useState(null);
-
+  const {changeEmogi} = useEmojiStore()
   const images = { thumbs_up: thumbs_up, victory: victory, rock: rock };
-
+  // console.log(emoji)
   const runHandpose = async () => {
     const net = await handpose.load();
     //  Loop and detect hands
@@ -78,6 +81,7 @@ function App() {
 
           // console.log(gesture.gestures);
           setEmoji(gesture.gestures[maxConfidence].name);
+          changeEmogi(gesture.gestures[maxConfidence].name)
         }
       }
 
@@ -91,35 +95,32 @@ runHandpose()
 
   return (
     <div className="App">
-      <header className="App-header">
+      <Scene />
+
         <Webcam
           ref={webcamRef}
           mirrored={true}
           style={{
             position: "absolute",
-            marginLeft: "auto",
-            marginRight: "auto",
+
             left: 0,
             right: 0,
-            textAlign: "center",
             zindex: 9,
-            width: 640,
-            height: 480,
+            width: '280px',
+            height: '280px',
           }}
         />
-
+        
         <canvas
           ref={canvasRef}
           style={{
             position: "absolute",
-            marginLeft: "auto",
-            marginRight: "auto",
+
             left: 0,
             right: 0,
-            textAlign: "center",
             zindex: 9,
-            width: 640,
-            height: 480,
+            width: '280px',
+            height: '280px',
           }}
         />
         {emoji !== null ? (
@@ -128,19 +129,15 @@ runHandpose()
             alt={emoji}
             style={{
               position: "absolute",
-              marginLeft: "auto",
-              marginRight: "auto",
-              left: 400,
-              bottom: 500,
-              right: 0,
-              textAlign: "center",
-              height: 100,
+              top: 20,
+              left: 260,
+              height: 50,
             }}
           />
         ) : (
           ""
         )}
-      </header>
+
     </div>
   );
 }
