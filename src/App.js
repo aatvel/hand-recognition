@@ -7,15 +7,24 @@ import "./App.css";
 import { drawHand } from "./utilities";
 
 import * as fp from "fingerpose";
+// import fpg from 'fingerpose-gestures'
 import victory from "./img/victory.png";
 import thumbs_up from "./img/thumbs_up.png";
+// import finger_splayed from './img/five.png'
+import pinching from './img/pinching.png'
+import ok from './img/ok.png'
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const [emoji, setEmoji] = useState(null);
-  const images = {thumbs_up:thumbs_up, victory:victory};
+  const images = {thumbs_up:thumbs_up,
+    victory:victory,
+    // finger_splayed: finger_splayed, 
+    // ok: ok, 
+    // pinching: pinching
+  };
 
   const runHandpose = async () => {
     const net = await handpose.load();
@@ -47,7 +56,7 @@ function App() {
       canvasRef.current.height = videoHeight;
 
       // Make Detections
-      const hand = await net.estimateHands(video);
+      const hand = await net.estimateHands(video, true);
       // console.log(hand);
 
        // ADDED GESTURE HANDLING
@@ -83,13 +92,14 @@ function App() {
     }
   };
 
-  runHandpose();
+  useEffect(()=>{runHandpose()},[]);
 
   return (
     <div className="App">
       <header className="App-header">
         <Webcam
           ref={webcamRef}
+          mirrored={true}
           style={{
             position: "absolute",
             marginLeft: "auto",
@@ -120,6 +130,7 @@ function App() {
         {emoji !== null ? (
           <img
             src={images[emoji]}
+            alt={emoji}
             style={{
               position: "absolute",
               marginLeft: "auto",
