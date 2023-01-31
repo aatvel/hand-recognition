@@ -1,34 +1,30 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 // import logo from './logo.svg';
 import * as tf from "@tensorflow/tfjs";
 import * as handpose from "@tensorflow-models/handpose";
 import Webcam from "react-webcam";
 import "./App.css";
 import { drawHand } from "./utilities";
+import rockGesture from "./Rock";
 
 import * as fp from "fingerpose";
 // import fpg from 'fingerpose-gestures'
 import victory from "./img/victory.png";
 import thumbs_up from "./img/thumbs_up.png";
-// import finger_splayed from './img/five.png'
-import pinching from './img/pinching.png'
-import ok from './img/ok.png'
+
+import rock from "./img/rock.png";
+
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const [emoji, setEmoji] = useState(null);
-  const images = {thumbs_up:thumbs_up,
-    victory:victory,
-    // finger_splayed: finger_splayed, 
-    // ok: ok, 
-    // pinching: pinching
-  };
+
+  const images = { thumbs_up: thumbs_up, victory: victory, rock: rock };
 
   const runHandpose = async () => {
     const net = await handpose.load();
-    // console.log("Handpose model loaded.");
     //  Loop and detect hands
     setInterval(() => {
       detect(net);
@@ -59,21 +55,20 @@ function App() {
       const hand = await net.estimateHands(video, true);
       // console.log(hand);
 
-       // ADDED GESTURE HANDLING
+      // ADDED GESTURE HANDLING
 
-       if (hand.length > 0) {
+      if (hand.length > 0) {
         const GE = new fp.GestureEstimator([
           fp.Gestures.VictoryGesture,
           fp.Gestures.ThumbsUpGesture,
+          rockGesture,
           // fpg.Gestures.fingerSplayedGesture,
           // fpg.Gestures.pinchingGesture,
           // fpg.Gestures.okGesture
         ]);
-        const gesture = await GE.estimate(hand[0].landmarks, 9);
+        const gesture = await GE.estimate(hand[0].landmarks, 5);
         // console.log(gesture)
         if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
-          // console.log(gesture.gestures);
-
           const confidence = gesture.gestures.map(
             (prediction) => prediction.score
           );
@@ -81,8 +76,8 @@ function App() {
             Math.max.apply(null, confidence)
           );
 
+          // console.log(gesture.gestures);
           setEmoji(gesture.gestures[maxConfidence].name);
-   
         }
       }
 
